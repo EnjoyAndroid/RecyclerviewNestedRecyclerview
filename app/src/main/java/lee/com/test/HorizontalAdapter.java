@@ -31,7 +31,6 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
         recyclerView.setAdapter(innerAdapter);
         if (item.scrollOffset > 0) {
             layoutManager.scrollToPositionWithOffset(item.scrollPosition, item.scrollOffset);
-//            Log.d("adapter", "position: " + helper.getLayoutPosition() + "      item.scrollPosition: " + item.scrollPosition + "      scrollOffset: " + item.scrollOffset);
         }
         recyclerView.addOnScrollListener(new MyOnScrollListener(item, layoutManager));
     }
@@ -42,7 +41,7 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
         private LinearLayoutManager mLayoutManager;
         private Entity mEntity;
         private int mItemWidth;
-        private int mItemMarging;
+        private int mItemMargin;
 
         public MyOnScrollListener(Entity shopItem, LinearLayoutManager layoutManager) {
             mLayoutManager = layoutManager;
@@ -67,15 +66,15 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
                         if (item != null) {
                             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) item.getLayoutParams();
                             mItemWidth = item.getWidth();
-                            mItemMarging = layoutParams.rightMargin;
+                            mItemMargin = layoutParams.rightMargin;
                         }
                     }
                     if (offset > 0 && mItemWidth > 0) {
-                        mEntity.scrollOffset = mItemWidth - offset % mItemWidth + mEntity.scrollPosition * mItemMarging;
+                        //offset % mItemWidth：得到当前position的滑动距离
+                        //mEntity.scrollPosition * mItemMargin：得到（0至position）的所有item的margin
+                        //用当前item的宽度-所有margin-当前position的滑动距离，就得到offset。
+                        mEntity.scrollOffset = mItemWidth - offset % mItemWidth + mEntity.scrollPosition * mItemMargin;
                     }
-//                    Log.i("adapter", "  mEntity.scrollPosition: " + mEntity.scrollPosition + "    mEntity.scrollOffset: " + mEntity.scrollOffset);
-//                    Log.d("adapter", " offset: " + offset);
-//                    Log.d("adapter", " itemWidth: " + mItemWidth + "   mItemMarging: " + mItemMarging);
                     break;
             }
         }
