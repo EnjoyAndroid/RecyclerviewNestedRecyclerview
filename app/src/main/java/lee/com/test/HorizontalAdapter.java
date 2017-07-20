@@ -16,17 +16,6 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
 
     public static final String TAG = HorizontalAdapter.class.getSimpleName();
 
-    public interface OnInnerAdapterClickListener {
-        void onInnerItemClick(Entity parent, Entity.InnerEntity item);
-    }
-
-    private OnInnerAdapterClickListener mListener;
-
-    public void setOnInnerAdapterListener(OnInnerAdapterClickListener listener) {
-        mListener = listener;
-    }
-
-
     public HorizontalAdapter(List<Entity> data) {
         super(R.layout.item_horizontal, data);
     }
@@ -38,7 +27,7 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(OrientationHelper.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
-        InnerAdapter innerAdapter = new InnerAdapter(item, item.innerEntities);
+        InnerAdapter innerAdapter = new InnerAdapter(item.innerEntities);
         recyclerView.setAdapter(innerAdapter);
         if (item.scrollOffset > 0) {
             layoutManager.scrollToPositionWithOffset(item.scrollPosition, item.scrollOffset);
@@ -48,17 +37,16 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
     }
 
 
-
     private class MyOnScrollListener extends RecyclerView.OnScrollListener {
 
         private LinearLayoutManager mLayoutManager;
-        private Entity mShopItem;
+        private Entity mEntity;
         private int mItemWidth;
         private int mItemMarging;
 
         public MyOnScrollListener(Entity shopItem, LinearLayoutManager layoutManager) {
             mLayoutManager = layoutManager;
-            mShopItem = shopItem;
+            mEntity = shopItem;
         }
 
         @Override
@@ -73,9 +61,9 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
                 case RecyclerView.SCROLL_STATE_IDLE:
 
                     int offset = recyclerView.computeHorizontalScrollOffset();
-                    mShopItem.scrollPosition = mLayoutManager.findFirstVisibleItemPosition() < 0 ? mShopItem.scrollPosition : mLayoutManager.findFirstVisibleItemPosition() + 1;
+                    mEntity.scrollPosition = mLayoutManager.findFirstVisibleItemPosition() < 0 ? mEntity.scrollPosition : mLayoutManager.findFirstVisibleItemPosition() + 1;
                     if (mItemWidth <= 0) {
-                        View item = mLayoutManager.findViewByPosition(mShopItem.scrollPosition);
+                        View item = mLayoutManager.findViewByPosition(mEntity.scrollPosition);
                         if (item != null) {
                             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) item.getLayoutParams();
                             mItemWidth = item.getWidth();
@@ -83,9 +71,9 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
                         }
                     }
                     if (offset > 0 && mItemWidth > 0) {
-                        mShopItem.scrollOffset = mItemWidth - offset % mItemWidth + mShopItem.scrollPosition * mItemMarging;
+                        mEntity.scrollOffset = mItemWidth - offset % mItemWidth + mEntity.scrollPosition * mItemMarging;
                     }
-//                    Log.i("adapter", "  mShopItem.scrollPosition: " + mShopItem.scrollPosition + "    mShopItem.scrollOffset: " + mShopItem.scrollOffset);
+//                    Log.i("adapter", "  mEntity.scrollPosition: " + mEntity.scrollPosition + "    mEntity.scrollOffset: " + mEntity.scrollOffset);
 //                    Log.d("adapter", " offset: " + offset);
 //                    Log.d("adapter", " itemWidth: " + mItemWidth + "   mItemMarging: " + mItemMarging);
                     break;
@@ -96,11 +84,8 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
 
     private class InnerAdapter extends BaseQuickAdapter<Entity.InnerEntity, BaseViewHolder> {
 
-        private Entity mParent;
-
-        public InnerAdapter(Entity parent, List<Entity.InnerEntity> datas) {
+        public InnerAdapter(List<Entity.InnerEntity> datas) {
             super(R.layout.item_horizontal_inner, datas);
-            mParent = parent;
         }
 
         @Override
@@ -108,15 +93,6 @@ public class HorizontalAdapter extends BaseQuickAdapter<Entity, BaseViewHolder> 
 
             helper.setText(R.id.title, item.innerTitle);
             ((ImageView) helper.getView(R.id.iv)).setImageResource(item.innerImageId);
-
-            helper.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mListener != null) {
-                        mListener.onInnerItemClick(mParent, item);
-                    }
-                }
-            });
         }
 
     }
