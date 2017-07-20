@@ -24,7 +24,7 @@ public class VerticalActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         List<Entity> list = new ArrayList<>();
-        for (int i = 1; i < 21; i++) {
+        for (int i = 1; i < 11; i++) {
             Entity entity = new Entity();
             entity.title = "title" + i;
             List<Entity.InnerEntity> innerEntities = new ArrayList<>();

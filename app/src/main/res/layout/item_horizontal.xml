@@ -7,8 +7,7 @@
               android:orientation="vertical"
               android:paddingLeft="14dp"
               android:paddingRight="14dp"
-              android:focusableInTouchMode="true"
-              android:focusable="true"
+
     >
 
     <TextView
